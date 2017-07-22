@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"encoding/csv"
 	"fmt"
 	"github.com/sjwhitworth/golearn/base"
 	"github.com/sjwhitworth/golearn/evaluation"
 	"github.com/sjwhitworth/golearn/knn"
+	"io/ioutil"
 )
 
 func main() {
@@ -43,6 +46,20 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("check:", check)
+	exampleFile, err := ioutil.ReadFile("example.csv")
+	if err != nil {
+		panic(err)
+	}
+	r := csv.NewReader(bytes.NewReader(exampleFile))
+	records, err := r.ReadAll()
+	if err != nil {
+		panic(err)
+	}
+
+	_, size := check.Size()
+	for i := 0; i < size; i++ {
+		headers := records[0]
+		fmt.Printf("%v:%v, %v:%v, type: %v\n", headers[0], records[i+1][0], headers[1], records[i+1][1], check.RowString(i))
+	}
 
 }
